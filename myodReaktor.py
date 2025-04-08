@@ -21,6 +21,7 @@ async def main(url):
     async with aiohttp.ClientSession() as session:
         html_scanner = HTMLWAFScanner(waf_db)
         html_results = await html_scanner.scan(session, url)
+    print("\n::: ============================================================ :::\n")
     final_output = {
         "target": url,
         "timestamp": datetime.now().isoformat(),
