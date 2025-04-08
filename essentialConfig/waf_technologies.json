@@ -1,0 +1,124 @@
+{
+    "wafs": {
+        "cloudflare": {
+            "name": "Cloudflare",
+            "regex": "cloudflare|__cfduid|cf-ray|cloudflare-nginx",
+            "headers": ["server", "cf-ray", "cf-request-id"],
+            "block_codes": [403, 406, 503, 429],
+            "company": "Cloudflare Inc."
+        },
+        "akamai": {
+            "name": "Akamai (Kona/Prolexic)",
+            "regex": "akamai|akamaighost|akamai\\-origin\\-shield",
+            "headers": ["server", "akamai-origin-shield"],
+            "block_codes": [403, 406, 502],
+            "company": "Akamai Technologies"
+        },
+        "aws": {
+            "name": "AWS WAF",
+            "regex": "awsalb|awselb/2\\.0|aws.?waf",
+            "headers": ["server", "x-aws-request-id"],
+            "block_codes": [403, 405, 502],
+            "company": "Amazon Web Services"
+        },
+        "imperva": {
+            "name": "Imperva (Incapsula)",
+            "regex": "incapsula|imperva|x\\-iinfo|visid\\_incap\\_",
+            "headers": ["x-cdn", "x-iinfo", "x-protected-by"],
+            "block_codes": [403, 406, 503, 429],
+            "company": "Imperva"
+        },
+        "fastly": {
+            "name": "Fastly",
+            "regex": "fastly|x\\-fastly\\-backend",
+            "headers": ["server", "x-fastly-backend-req"],
+            "block_codes": [403, 406],
+            "company": "Fastly"
+        },
+        "f5": {
+            "name": "F5 BIG-IP ASM",
+            "regex": "bigip|f5|big\\-ip|bigipserver",
+            "headers": ["server", "x-wa-info"],
+            "block_codes": [400, 401, 403, 405, 413, 503],
+            "company": "F5 Networks"
+        },
+        "fortinet": {
+            "name": "FortiWeb",
+            "regex": "fortiweb|fortigate",
+            "headers": ["server", "x-fortigate-ip", "x-fortigate-serial"],
+            "block_codes": [403, 406, 413],
+            "company": "Fortinet"
+        },
+        "barracuda": {
+            "name": "Barracuda WAF",
+            "regex": "barracuda|barra_counter_session",
+            "headers": ["server", "barracuda-waf"],
+            "block_codes": [403, 406, 503],
+            "company": "Barracuda Networks"
+        },
+        "citrix": {
+            "name": "Citrix Netscaler",
+            "regex": "netscaler|citrix|ns\\_af|ns\\_cache",
+            "headers": ["server", "ns_af", "citrix-ns-id"],
+            "block_codes": [403, 406, 503],
+            "company": "Citrix"
+        },
+        "radware": {
+            "name": "Radware AppWall",
+            "regex": "radware|appwall|x\\-slb\\-ip",
+            "headers": ["server", "x-slb-ip"],
+            "block_codes": [403, 406, 502],
+            "company": "Radware"
+        },
+        "modsecurity": {
+            "name": "ModSecurity",
+            "regex": "mod\\_security|modsecurity|libmodsecurity",
+            "headers": ["server", "mod-security"],
+            "block_codes": [403, 406, 500],
+            "company": "OWASP"
+        },
+        "nginx": {
+            "name": "NAXSI (Nginx WAF)",
+            "regex": "naxsi|nginx",
+            "headers": ["server", "x-naxsi-block"],
+            "block_codes": [403, 406],
+            "company": "NBS Systems"
+        },
+        "sucuri": {
+            "name": "Sucuri Firewall",
+            "regex": "sucuri|cloudproxy|sucuri\\/cloudproxy",
+            "headers": ["server", "x-sucuri-id", "x-sucuri-cache"],
+            "block_codes": [403, 406, 503],
+            "company": "Sucuri"
+        },
+        "paloalto": {
+            "name": "Palo Alto Prisma",
+            "regex": "palo\\s?alto|prisma",
+            "headers": ["server", "x-paloalto-hostname"],
+            "block_codes": [403, 406],
+            "company": "Palo Alto Networks"
+        },
+        "cloudfront": {
+            "name": "AWS CloudFront",
+            "regex": "cloudfront|x\\-amz\\-cf\\-pop",
+            "headers": ["server", "x-amz-cf-pop"],
+            "block_codes": [403, 406],
+            "company": "Amazon Web Services"
+        },
+        "azure": {
+            "name": "Azure Application Gateway",
+            "regex": "azure|application\\s?gateway",
+            "headers": ["server", "x-azure-ref"],
+            "block_codes": [403, 406],
+            "company": "Microsoft"
+        },
+        "godaddy": {
+            "name": "GoDaddy WAF",
+            "regex": "godaddy|secureserver\\.net|wpaas",
+            "headers": ["server", "x-wpaas-request-id"],
+            "block_codes": [403, 406, 503],
+            "company": "GoDaddy"
+        }
+    },
+    "generic_block_codes": [403, 406, 429, 503, 405, 413]
+}
