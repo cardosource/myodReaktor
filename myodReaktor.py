@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """
-myodReaktor.py -u <url>
+myodReaktor.py - Copyright (C) 2025 Jeferson Cardoso
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License [...]
+
 """
 import asyncio
 import aiohttp
