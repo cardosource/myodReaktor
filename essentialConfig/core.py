@@ -1,26 +1,29 @@
 #!/usr/bin/env python3
 """
-myodReaktor ::  WAF Detector - Responsabilidade Principal
+myodReaktor :: solide close open dependence inject
+
 """
 
-import aiohttp
 import json
-import os
 from datetime import datetime
-import progressbar
-from time import sleep
-from _modules.compatibility import FullResponseWrapper
+from typing import List, Dict, Any
+from _modules.request_handler import RequestHandler, RequestError
+from _modules.mensagem import ProgressoVertical
+from _modules.waf_db_loader import load_waf_db
+
 
 class WAFDetector:
-    BANNER = r"""
- _____ _   _  ___   ___   ___   ___  ____ _   _ _____ ____  ______
- | | |  \_/  |   | |   \ |___/ |___ |___| |__/    |   |   | |____/
- | | |   |   |___| |___/ |   \_|___ |   | |  \_   |   |___| |    \_
- myodReaktor.py <url>                                                                                                                                                                                                                       
-"""
-    print("\033[93m" + BANNER + "\033[0m")
-    def __init__(self, waf_db=None, detection_strategy=None):
-        self.waf_db = waf_db or self._load_waf_db()
+    def __init__(self, waf_db: Dict[str, Any] = None,
+                 detection_strategy: Any = None,
+                 mensagem_strategy: Any = None,
+                 scanner_strategy: Any = None):
+        self.waf_db = waf_db or load_waf_db()
+        self._initialize_results()
+        self.detection_strategy = detection_strategy
+        self.mensagem_strategy = mensagem_strategy or ProgressoVertical()
+        self.scanner_strategy = scanner_strategy
+
+    def _initialize_results(self) -> None:
         self.results = {
             'target': None,
             'waf_detected': False,
@@ -29,63 +32,69 @@ class WAFDetector:
             'evidence': None,
             'blocked': False,
             'status_code': None,
-            'timestamp': None
+            'timestamp': None,
+            'html_waf_detections': []
         }
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-        }
-        self.detection_strategy = detection_strategy
 
-    def _load_waf_db(self):
+    async def _fetch_html_content(self, url: str, handler: RequestHandler) -> str:
         try:
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            waf_db_path = os.path.join(script_dir, "waf_technologies.json")
-            with open(waf_db_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except Exception as e:
-            raise Exception(f"Failed to load WAF database: {e}")
-    
-    def _animate_progress(self, label, duration=1.0, steps=20):
-        widgets = [
-            f'   {label} [ ',
-            progressbar.Bar(marker='#', left='  ', right='    '),
-            ' ]',
-            progressbar.Percentage()
-        ]
-        with progressbar.ProgressBar(widgets=widgets, max_value=100) as bar:
-            for i in range(0, 79, 5):  
-                bar.update(i)
-                sleep(duration/steps)
+            response, _ = await handler.get(url)
+            return await response.text()
+        except RequestError as e:
+            raise Exception(f"Failed to fetch HTML content: {str(e)}")
 
-    async def detect_waf(self, url):
+    async def _process_html_detections(self, url: str, handler: RequestHandler) -> List[Dict[str, Any]]:
+        if not self.scanner_strategy:
+            raise Exception("Scanner strategy is not set")
+
+        html_scanner = self.scanner_strategy
+        detected_wafs = []
+
+        for test_url in html_scanner.generate_test_urls(url):
+            try:
+                content = await self._fetch_html_content(test_url, handler)
+                detections = await html_scanner.scan(content)
+                for detection in detections:
+                    if not any(d['waf'] == detection['waf'] for d in detected_wafs):
+                        detected_wafs.append(detection)
+            except Exception:
+                continue
+
+        return detected_wafs
+
+    async def detect_waf(self, url: str) -> Dict[str, Any]:
         try:
-            self._animate_progress("Checking connection")
-            async with aiohttp.ClientSession(headers=self.headers) as session:
-                async with session.get(url, ssl=False) as response:
-                    self._animate_progress("Analyzing response")
-                    
-                    #wrapper LSP
-                    wrapped_response = FullResponseWrapper(response)
-                    waf_info = await self.detection_strategy.check_waf(wrapped_response, self.waf_db)
-                    
-                    self._animate_progress("Finalizing analysis")
-                    
-                    self.results = {
-                        'target': url,
-                        'waf_detected': waf_info['detected'],
-                        'waf_name': waf_info['name'],
-                        'confidence': round(waf_info['confidence'], 2),
-                        'evidence': waf_info['evidence'],
-                        'blocked': waf_info['blocked'],
-                        'status_code': waf_info['status_code'],
-                        'timestamp': datetime.now().isoformat()
-                    }
-                    
-                    return self.results
-                    
+            self.mensagem_strategy.mostrar_progresso("Checking connection")
+
+            async with RequestHandler() as handler:
+                response, _ = await handler.get(url)
+
+                self.mensagem_strategy.mostrar_progresso(" Analyzing response")
+
+                waf_info = await self.detection_strategy.check_waf(response, self.waf_db)
+
+                self.mensagem_strategy.mostrar_progresso("   Finalizing analysis")
+
+                html_detections = await self._process_html_detections(url, handler)
+
+                self.results.update({
+                    'target': url,
+                    'waf_detected': waf_info['detected'],
+                    'waf_name': waf_info['name'],
+                    'confidence': round(waf_info['confidence'], 2),
+                    'evidence': waf_info['evidence'],
+                    'blocked': waf_info['blocked'],
+	            'status_code': waf_info['status_code'],
+                    'timestamp': datetime.now().isoformat(),
+                    'html_waf_detections': html_detections
+                })
+
+                return self.results
+
+        except RequestError as e:
+            raise Exception(f"Request failed: {str(e)}")
         except Exception as e:
             raise Exception(f"Analysis failed: {str(e)}")
 
-    def get_results(self):
+    def get_results(self) -> Dict[str, Any]:
         return self.results
