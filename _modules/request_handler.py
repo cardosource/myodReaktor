@@ -40,12 +40,29 @@ class RequestHandler:
         if self.session:
             await self.session.close()
 
+    async def _decode_response(self, response: aiohttp.ClientResponse) -> str:
+        """Tenta decodificar o conteúdo da resposta com vários encodings."""
+        content = await response.read()
+        encodings = ['utf-8', 'latin-1', 'iso-8859-1', 'windows-1252']
+        
+        for encoding in encodings:
+            try:
+                return content.decode(encoding)
+            except UnicodeDecodeError:
+                continue
+        
+        # Se nenhum encoding funcionar, retorna como latin-1 (não gera erro)
+        return content.decode('latin-1')
+
     async def get(self, url: str, **kwargs) -> Tuple[FullResponseWrapper, str]:
         if not self.session:
             raise RuntimeError("Session not started. Use async with.")
             
         try:
             response = await self.session.get(url, **kwargs)
+            # Decodifica o conteúdo antes de envolver a resposta
+            decoded_content = await self._decode_response(response)
+            response._body = decoded_content.encode('utf-8')  # Reconverte para bytes
             content_type = response.headers.get('Content-Type', '').lower()
             analysis_type = 'html' if 'text/html' in content_type else 'headers'
             return FullResponseWrapper(response), analysis_type
@@ -59,6 +76,9 @@ class RequestHandler:
             
         try:
             response = await self.session.post(url, data=data, **kwargs)
+            # Decodifica o conteúdo antes de envolver a resposta
+            decoded_content = await self._decode_response(response)
+            response._body = decoded_content.encode('utf-8')  # Reconverte para bytes
             content_type = response.headers.get('Content-Type', '').lower()
             analysis_type = 'html' if 'text/html' in content_type else 'headers'
             return FullResponseWrapper(response), analysis_type
