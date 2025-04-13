@@ -28,18 +28,8 @@ Checking connection |  Analyzing response |    Finalizing analysis
 ::: ============================================================ :::
 
 {
-  "target": "https://xxx.com",
-  "timestamp": "2025-04-08T07:38:16.187532",
-  "header_analysis": {
-    "target": "https://xxx.com",
-    "waf_detected": true,
-    "waf_name": "Sucuri Firewall",
-    "confidence": 0.9,
-    "evidence": "Header 'server' + Header 'x-sucuri-id' + Header 'x-sucuri-cache'",
-    "blocked": false,
-    "status_code": 200,
-    "timestamp": "2025-04-08T07:38:14.949517"
-  },
+  "target": " https://xXx.com/id=11",
+  "timestamp": "2025-04-13T13:11:55.115955",
   "html_analysis": {
     "detected_wafs": [
       {
@@ -53,6 +43,21 @@ Checking connection |  Analyzing response |    Finalizing analysis
         "evidence": "Regex: godaddy|secureserver\\.net|wpaas"
       }
     ]
+  },
+  "stealth_analysis": {
+    "waf_detected": true,
+    "waf_name": "Sucuri Firewall",
+    "confidence": 0.9,
+    "evidence": "Header 'server' + Header 'x-sucuri-id' + Header 'x-sucuri-cache'",
+    "blocked": false,
+    "status_code": 200,
+    "timestamp": "2025-04-13T13:11:55.115489",
+    "protocol_analysis": {
+      "http_version": "1.1",
+      "http2_detected": false,
+      "http2_evidence": null,
+      "http2_confidence": 0
+    }
   }
 }
 
