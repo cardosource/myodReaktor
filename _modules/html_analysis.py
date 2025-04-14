@@ -37,6 +37,7 @@ class HTMLWAFScanner:
             "1' OR 1=1-- -",
             "1' OR 1=1#",
             "1' OR 1=1/*"
+
         ]
     
     async def scan(self, content: str) -> list:

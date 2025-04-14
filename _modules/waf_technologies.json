@@ -4,121 +4,225 @@
             "name": "Cloudflare",
             "regex": "cloudflare|__cfduid|cf-ray|cloudflare-nginx",
             "headers": ["server", "cf-ray", "cf-request-id"],
+            "http2_headers": ["x-http2-push", "cf-h2-pushed"],
+            "ssl_patterns": ["Cloudflare", "Inc.", "CF-RAY"],
             "block_codes": [403, 406, 503, 429],
-            "company": "Cloudflare Inc."
+            "company": "Cloudflare Inc.",
+            "behavioral_indicators": {
+                "js_challenge": "/cdn-cgi/challenge-platform/",
+                "captcha_challenge": "/cdn-cgi/challenge-platform/h/b/orchestrate"
+            }
         },
         "akamai": {
             "name": "Akamai (Kona/Prolexic)",
             "regex": "akamai|akamaighost|akamai\\-origin\\-shield",
             "headers": ["server", "akamai-origin-shield"],
+            "http2_headers": ["akamai-h2-flow"],
+            "ssl_patterns": ["Akamai", "Kona", "Prolexic"],
             "block_codes": [403, 406, 502],
-            "company": "Akamai Technologies"
+            "company": "Akamai Technologies",
+            "behavioral_indicators": {
+                "bot_manager": "akamai/site/bm"
+            }
         },
         "aws": {
             "name": "AWS WAF",
             "regex": "awsalb|awselb/2\\.0|aws.?waf",
             "headers": ["server", "x-aws-request-id"],
+            "http2_headers": ["x-amz-cf-id-h2"],
+            "ssl_patterns": ["Amazon", "AWS", "CloudFront"],
             "block_codes": [403, 405, 502],
-            "company": "Amazon Web Services"
+            "company": "Amazon Web Services",
+            "behavioral_indicators": {
+                "block_page": "aws-support-notification"
+            }
         },
         "imperva": {
             "name": "Imperva (Incapsula)",
             "regex": "incapsula|imperva|x\\-iinfo|visid\\_incap\\_",
             "headers": ["x-cdn", "x-iinfo", "x-protected-by"],
+            "http2_headers": ["x-incap-cache"],
+            "ssl_patterns": ["Imperva", "Incapsula"],
             "block_codes": [403, 406, 503, 429],
-            "company": "Imperva"
+            "company": "Imperva",
+            "behavioral_indicators": {
+                "block_page": "/_Incapsula_Resource"
+            }
         },
         "fastly": {
             "name": "Fastly",
             "regex": "fastly|x\\-fastly\\-backend",
             "headers": ["server", "x-fastly-backend-req"],
+            "http2_headers": ["fastly-ff"],
+            "ssl_patterns": ["Fastly"],
             "block_codes": [403, 406],
-            "company": "Fastly"
+            "company": "Fastly",
+            "behavioral_indicators": {
+                "error_page": "fastly error"
+            }
         },
         "f5": {
             "name": "F5 BIG-IP ASM",
             "regex": "bigip|f5|big\\-ip|bigipserver",
             "headers": ["server", "x-wa-info"],
+            "http2_headers": ["x-f5-h2"],
+            "ssl_patterns": ["F5", "BIG-IP"],
             "block_codes": [400, 401, 403, 405, 413, 503],
-            "company": "F5 Networks"
+            "company": "F5 Networks",
+            "behavioral_indicators": {
+                "block_page": "The requested URL was rejected"
+            }
         },
         "fortinet": {
             "name": "FortiWeb",
             "regex": "fortiweb|fortigate",
             "headers": ["server", "x-fortigate-ip", "x-fortigate-serial"],
+            "ssl_patterns": ["Fortinet", "FortiWeb"],
             "block_codes": [403, 406, 413],
-            "company": "Fortinet"
+            "company": "Fortinet",
+            "behavioral_indicators": {
+                "block_page": "FortiWeb"
+            }
         },
         "barracuda": {
             "name": "Barracuda WAF",
             "regex": "barracuda|barra_counter_session",
             "headers": ["server", "barracuda-waf"],
+            "ssl_patterns": ["Barracuda"],
             "block_codes": [403, 406, 503],
-            "company": "Barracuda Networks"
+            "company": "Barracuda Networks",
+            "behavioral_indicators": {
+                "block_page": "Barracuda"
+            }
         },
         "citrix": {
             "name": "Citrix Netscaler",
             "regex": "netscaler|citrix|ns\\_af|ns\\_cache",
             "headers": ["server", "ns_af", "citrix-ns-id"],
+            "ssl_patterns": ["Citrix", "Netscaler"],
             "block_codes": [403, 406, 503],
-            "company": "Citrix"
+            "company": "Citrix",
+            "behavioral_indicators": {
+                "block_page": "Citrix"
+            }
         },
         "radware": {
             "name": "Radware AppWall",
             "regex": "radware|appwall|x\\-slb\\-ip",
             "headers": ["server", "x-slb-ip"],
+            "ssl_patterns": ["Radware"],
             "block_codes": [403, 406, 502],
-            "company": "Radware"
+            "company": "Radware",
+            "behavioral_indicators": {
+                "block_page": "AppWall"
+            }
         },
         "modsecurity": {
             "name": "ModSecurity",
             "regex": "mod\\_security|modsecurity|libmodsecurity",
             "headers": ["server", "mod-security"],
+            "ssl_patterns": ["ModSecurity"],
             "block_codes": [403, 406, 500],
-            "company": "OWASP"
+            "company": "OWASP",
+            "behavioral_indicators": {
+                "block_page": "ModSecurity"
+            }
         },
         "nginx": {
             "name": "NAXSI (Nginx WAF)",
             "regex": "naxsi|nginx",
             "headers": ["server", "x-naxsi-block"],
+            "http2_headers": ["x-nginx-h2"],
+            "ssl_patterns": ["Nginx", "NAXSI"],
             "block_codes": [403, 406],
-            "company": "NBS Systems"
+            "company": "NBS Systems",
+            "behavioral_indicators": {
+                "block_page": "NAXSI"
+            }
         },
         "sucuri": {
             "name": "Sucuri Firewall",
             "regex": "sucuri|cloudproxy|sucuri\\/cloudproxy",
             "headers": ["server", "x-sucuri-id", "x-sucuri-cache"],
+            "ssl_patterns": ["Sucuri"],
             "block_codes": [403, 406, 503],
-            "company": "Sucuri"
+            "company": "Sucuri",
+            "behavioral_indicators": {
+                "block_page": "Sucuri WebSite Firewall"
+            }
         },
         "paloalto": {
             "name": "Palo Alto Prisma",
             "regex": "palo\\s?alto|prisma",
             "headers": ["server", "x-paloalto-hostname"],
+            "ssl_patterns": ["Palo Alto"],
             "block_codes": [403, 406],
-            "company": "Palo Alto Networks"
+            "company": "Palo Alto Networks",
+            "behavioral_indicators": {
+                "block_page": "Palo Alto"
+            }
         },
         "cloudfront": {
             "name": "AWS CloudFront",
             "regex": "cloudfront|x\\-amz\\-cf\\-pop",
             "headers": ["server", "x-amz-cf-pop"],
+            "http2_headers": ["x-amz-cf-h2"],
+            "ssl_patterns": ["CloudFront", "Amazon"],
             "block_codes": [403, 406],
-            "company": "Amazon Web Services"
+            "company": "Amazon Web Services",
+            "behavioral_indicators": {
+                "block_page": "CloudFront"
+            }
         },
         "azure": {
             "name": "Azure Application Gateway",
             "regex": "azure|application\\s?gateway",
             "headers": ["server", "x-azure-ref"],
+            "http2_headers": ["x-azure-h2"],
+            "ssl_patterns": ["Microsoft", "Azure"],
             "block_codes": [403, 406],
-            "company": "Microsoft"
+            "company": "Microsoft",
+            "behavioral_indicators": {
+                "block_page": "Azure"
+            }
         },
         "godaddy": {
             "name": "GoDaddy WAF",
             "regex": "godaddy|secureserver\\.net|wpaas",
             "headers": ["server", "x-wpaas-request-id"],
+            "ssl_patterns": ["GoDaddy"],
             "block_codes": [403, 406, 503],
-            "company": "GoDaddy"
+            "company": "GoDaddy",
+            "behavioral_indicators": {
+                "block_page": "GoDaddy"
+            }
         }
     },
-    "generic_block_codes": [403, 406, 429, 503, 405, 413]
+    "generic_block_codes": [403, 406, 429, 503, 405, 413],
+    "ssl_analysis": {
+        "common_ssl_ports": [443, 8443, 9443],
+        "weak_ciphers": [
+            "DES-CBC3-SHA",
+            "RC4-MD5",
+            "RC4-SHA"
+        ],
+        "deprecated_protocols": [
+            "SSLv2",
+            "SSLv3",
+            "TLSv1",
+            "TLSv1.1"
+        ]
+    },
+    "timing_thresholds": {
+        "normal": 1.0,
+        "suspicious": 2.5,
+        "waf_detected": 5.0
+    },
+    "common_waf_cookies": [
+        "__cfduid",
+        "incap_ses_",
+        "visid_incap_",
+        "ak_bmsc",
+        "TS01"
+    ]
 }
