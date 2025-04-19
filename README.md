@@ -1,5 +1,5 @@
 
-**myodReaktor** é um detector WAFs (Web Application Firewalls) que aplica técnica de fingerprinting  análise probabilística  multifatorial,combinando verificação de header HTTP e HTTP/2, SSL incluindo análise de DOM e status de bloqueio, tem uma implementação de algoritmos intercambiáveis  definindo  contrato único que permite substituição dinâmica e se adaptando  a resposta original.
+**myodReaktor** é um detector WAFs (Web Application Firewalls) que aplica técnica de fingerprinting  análise probabilística  multifatorial,combinando verificação de _header HTTP_ e _HTTP/2_, _SSL_ incluindo análise de _DOM_ e _status de bloqueio_, tem uma implementação de algoritmos intercambiáveis  definindo  contrato único que permite substituição dinâmica e se adaptando  a resposta original.
 
 
 **saida da checkagem:**            
